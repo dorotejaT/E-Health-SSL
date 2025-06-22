@@ -1,23 +1,18 @@
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, request,flash
 from OpenSSL import crypto
 import textwrap
 
 app = Flask(__name__)
 
-
-# Helper to clean and reformat the PEM certificate
 def fix_cert_format(raw_cert):
     raw_cert = raw_cert.strip()
 
-    # Remove any existing markers and line breaks
     raw_cert = raw_cert.replace("-----BEGIN CERTIFICATE-----", "")
     raw_cert = raw_cert.replace("-----END CERTIFICATE-----", "")
     raw_cert = raw_cert.replace(" ", "").replace("\n", "").replace("\r", "")
 
-    # Wrap base64 content to 64-character lines
     wrapped = "\n".join(textwrap.wrap(raw_cert, 64))
 
-    # Add correct PEM headers
     return f"-----BEGIN CERTIFICATE-----\n{wrapped}\n-----END CERTIFICATE-----"
 
 
@@ -34,7 +29,6 @@ def login():
             request.headers.get('SSL_CLIENT_CERT')
     )
 
-    # Print debug info
     print("=== SSL Environment Variables ===")
     for key, value in request.environ.items():
         if 'SSL' in key:
@@ -87,7 +81,6 @@ def login():
         <pre>Certificate data (truncated): {cert_pem[:200]}...</pre>
         """
 
-
 @app.route('/doctor')
 def doctor_dashboard():
     user = request.args.get('user', 'Doctor')
@@ -118,7 +111,21 @@ def debug_ssl():
     <h3>HTTP Headers:</h3>
     <pre>{headers_info}</pre>
     """
+@app.route('/manage_users')
+def manage_users():
+    return render_template('manage_users.html')
+@app.route('/generate_reports')
+def generate_reports():
+    return render_template('generate_reports.html')
 
+@app.route('/view_logs')
+def view_logs():
+    return render_template('view_logs.html')
+
+@app.route('/logout')
+def logout():
+    flash("Успешно се одјавивте.", "info")
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     print("Starting Flask on http://127.0.0.1:5000")

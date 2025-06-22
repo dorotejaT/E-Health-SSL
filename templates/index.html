@@ -6,10 +6,27 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
-<div class="container text-center py-5">
-    <h1 class="mb-4">Е-Систем за Здравство</h1>
-    <p class="lead">Најави се со сертификат за пристап</p>
-    <a href="/login" class="btn btn-primary btn-lg">Најава</a>
+
+<div class="container py-5">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="text-center">
+        <h1 class="mb-4">Е-Систем за Здравство</h1>
+        <p class="lead">Најави се со сертификат за пристап</p>
+        <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">Најава</a>
+    </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
