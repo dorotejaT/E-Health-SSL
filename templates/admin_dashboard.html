@@ -8,7 +8,7 @@
 <body class="bg-light">
 <div class="container py-5">
     <div class="card shadow-lg p-4">
-        <h1 class="mb-4 text-center">Панел за Администрација</h1>
+        <h1 class="mb-4 text-center">Администрација</h1>
 
         <div class="list-group mb-4">
             <a href="{{ url_for('manage_users') }}" class="list-group-item list-group-item-action">
@@ -21,10 +21,9 @@
                 Преглед на логови
             </a>
         </div>
-
-        <div class="d-grid gap-2">
-            <a href="{{ url_for('logout') }}" class="btn btn-danger">Одјави се</a>
-        </div>
+        <div class="text-center mt-5">
+        <a href="/" class="btn btn-outline-secondary">Одјави се</a>
+    </div>
     </div>
 </div>
 </body>

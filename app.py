@@ -1,18 +1,17 @@
-from flask import Flask, render_template, redirect, url_for, request,flash
+from flask import Flask, render_template, redirect, url_for, request, flash, session
 from OpenSSL import crypto
 import textwrap
+import secrets
 
 app = Flask(__name__)
+app.secret_key = secrets.token_hex(32)
 
 def fix_cert_format(raw_cert):
     raw_cert = raw_cert.strip()
-
     raw_cert = raw_cert.replace("-----BEGIN CERTIFICATE-----", "")
     raw_cert = raw_cert.replace("-----END CERTIFICATE-----", "")
     raw_cert = raw_cert.replace(" ", "").replace("\n", "").replace("\r", "")
-
     wrapped = "\n".join(textwrap.wrap(raw_cert, 64))
-
     return f"-----BEGIN CERTIFICATE-----\n{wrapped}\n-----END CERTIFICATE-----"
 
 
@@ -65,12 +64,14 @@ def login():
 
         print(f"User CN: {cn}")
 
+        session['user'] = cn  # ✅ Save user in session
+
         if "Doctor" in cn or "doctor" in cn.lower():
-            return redirect(url_for('doctor_dashboard', user=cn))
+            return redirect(url_for('doctor_dashboard'))
         elif "Patient" in cn or "patient" in cn.lower():
-            return redirect(url_for('patient_dashboard', user=cn))
+            return redirect(url_for('patient_dashboard'))
         elif "Admin" in cn or "admin" in cn.lower():
-            return redirect(url_for('admin_dashboard', user=cn))
+            return redirect(url_for('admin_dashboard'))
         else:
             return f"<h2>Непознат тип на корисник: {cn}</h2>"
 
@@ -81,21 +82,22 @@ def login():
         <pre>Certificate data (truncated): {cert_pem[:200]}...</pre>
         """
 
+
 @app.route('/doctor')
 def doctor_dashboard():
-    user = request.args.get('user', 'Doctor')
+    user = session.get('user', request.args.get('user', 'Doctor'))  # ✅ Prefer session user
     return render_template('doctor_dashboard.html', user=user)
 
 
 @app.route('/patient')
 def patient_dashboard():
-    user = request.args.get('user', 'Patient')
+    user = session.get('user', request.args.get('user', 'Patient'))  # ✅ Prefer session user
     return render_template('patient_dashboard.html', user=user)
 
 
 @app.route('/admin')
 def admin_dashboard():
-    user = request.args.get('user', 'Admin')
+    user = session.get('user', request.args.get('user', 'Admin'))  # ✅ Prefer session user
     return render_template('admin_dashboard.html', user=user)
 
 
@@ -111,23 +113,32 @@ def debug_ssl():
     <h3>HTTP Headers:</h3>
     <pre>{headers_info}</pre>
     """
+
+
 @app.route('/manage_users')
 def manage_users():
     return render_template('manage_users.html')
+
+
 @app.route('/generate_reports')
 def generate_reports():
     return render_template('generate_reports.html')
+
 
 @app.route('/view_logs')
 def view_logs():
     return render_template('view_logs.html')
 
+
 @app.route('/logout')
 def logout():
+    session.clear()  # ✅ Clears user session
     flash("Успешно се одјавивте.", "info")
-    return redirect(url_for('index'))
+    return redirect(url_for('login'))  # ✅ Goes to /login, requires cert again
+
 
 if __name__ == '__main__':
     print("Starting Flask on http://127.0.0.1:5000")
     print("Access it through Apache at https://localhost")
     app.run(host='127.0.0.1', port=5000, debug=True)
+
