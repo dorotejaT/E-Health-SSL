@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="mk">
+<head>
+    <meta charset="UTF-8">
+    <title>Пациент Портал</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold">Добредојде, {{ user }}</h1>
+        <p class="lead">Ова е Вашиот личен портал за медицински информации.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Основни Информации</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Име:</strong> {{ user }}</p>
+                    <p><strong>Возраст:</strong> 32 години</p>
+                    <p><strong>Крвна Група:</strong> A+</p>
+                    <p><strong>Контакт:</strong> 071-123-456</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Последни Посети</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li><strong>12.06.2025:</strong> Општ преглед - Нормално</li>
+                        <li><strong>20.05.2025:</strong> Вакцинација - Грип</li>
+                        <li><strong>05.03.2025:</strong> Крвни тестови - Нормални</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">Терапии</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Витамин Д 1000 IU
+                            <span class="badge bg-primary rounded-pill">Секојдневно</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Лек за притисок
+                            <span class="badge bg-primary rounded-pill">2x дневно</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Омега 3
+                            <span class="badge bg-primary rounded-pill">По потреба</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-outline-secondary">Одјави се</a>
+    </div>
+</div>
+
+</body>
+</html>

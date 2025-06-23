@@ -64,7 +64,7 @@ def login():
 
         print(f"User CN: {cn}")
 
-        session['user'] = cn  # ✅ Save user in session
+        session['user'] = cn
 
         if "Doctor" in cn or "doctor" in cn.lower():
             return redirect(url_for('doctor_dashboard'))
@@ -85,19 +85,19 @@ def login():
 
 @app.route('/doctor')
 def doctor_dashboard():
-    user = session.get('user', request.args.get('user', 'Doctor'))  # ✅ Prefer session user
+    user = session.get('user', request.args.get('user', 'Doctor'))
     return render_template('doctor_dashboard.html', user=user)
 
 
 @app.route('/patient')
 def patient_dashboard():
-    user = session.get('user', request.args.get('user', 'Patient'))  # ✅ Prefer session user
+    user = session.get('user', request.args.get('user', 'Patient'))
     return render_template('patient_dashboard.html', user=user)
 
 
 @app.route('/admin')
 def admin_dashboard():
-    user = session.get('user', request.args.get('user', 'Admin'))  # ✅ Prefer session user
+    user = session.get('user', request.args.get('user', 'Admin'))
     return render_template('admin_dashboard.html', user=user)
 
 
@@ -132,9 +132,9 @@ def view_logs():
 
 @app.route('/logout')
 def logout():
-    session.clear()  # ✅ Clears user session
+    session.clear()
     flash("Успешно се одјавивте.", "info")
-    return redirect(url_for('login'))  # ✅ Goes to /login, requires cert again
+    return redirect(url_for('login'))
 
 
 if __name__ == '__main__':
