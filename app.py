@@ -15,6 +15,19 @@ def fix_cert_format(raw_cert):
     return f"-----BEGIN CERTIFICATE-----\n{wrapped}\n-----END CERTIFICATE-----"
 
 
+# Initialize default patients in session if not exists
+def init_patients():
+    if 'patients' not in session:
+        session['patients'] = [
+            {'id': 1, 'name': 'Ивана Петрова', 'age': 34, 'medical_history': 'Алергија на полен, астма'},
+            {'id': 2, 'name': 'Мартин Јованов', 'age': 45, 'medical_history': 'Дијабетес тип 2, висок крвен притисок'},
+            {'id': 3, 'name': 'Елена Ристова', 'age': 29, 'medical_history': 'Нема значајна историја'},
+            {'id': 4, 'name': 'Гоце Велков', 'age': 52, 'medical_history': 'Кардиоваскуларни проблеми, хипертензија'},
+            {'id': 5, 'name': 'Снежана Димитрова', 'age': 61, 'medical_history': 'Остеопороза, алергија на пеницилин'}
+        ]
+        session['next_patient_id'] = 6
+
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -86,7 +99,43 @@ def login():
 @app.route('/doctor')
 def doctor_dashboard():
     user = session.get('user', request.args.get('user', 'Doctor'))
-    return render_template('doctor_dashboard.html', user=user)
+    init_patients()  # Initialize patients if not exists
+    patients = session.get('patients', [])
+    return render_template('doctor_dashboard.html', user=user, patients=patients)
+
+
+@app.route('/add_patient', methods=['GET', 'POST'])
+def add_patient():
+    if request.method == 'POST':
+        # Get form data
+        name = request.form.get('name')
+        age = request.form.get('age')
+        medical_history = request.form.get('medical_history', '')
+        
+        # Initialize patients if not exists
+        init_patients()
+        
+        # Create new patient
+        new_patient = {
+            'id': session['next_patient_id'],
+            'name': name,
+            'age': int(age),
+            'medical_history': medical_history
+        }
+        
+        # Add to session
+        session['patients'].append(new_patient)
+        session['next_patient_id'] += 1
+        session.modified = True  # Mark session as modified
+        
+        # Flash success message
+        flash(f'Пациентот {name} е успешно додаден!', 'success')
+        
+        # Redirect back to doctor dashboard
+        return redirect(url_for('doctor_dashboard'))
+    
+    # GET request - show the form
+    return render_template('add_patient.html')
 
 
 @app.route('/patient')
@@ -141,4 +190,3 @@ if __name__ == '__main__':
     print("Starting Flask on http://127.0.0.1:5000")
     print("Access it through Apache at https://localhost")
     app.run(host='127.0.0.1', port=5000, debug=True)
-
