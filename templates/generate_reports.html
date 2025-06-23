@@ -10,16 +10,29 @@
     <div class="card shadow-lg p-4">
         <h1 class="mb-4 text-center">Генерирање извештаи</h1>
 
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
         <div class="mb-4">
             <h5>Последни генерирани извештаи:</h5>
             <ul class="list-group">
-                <li class="list-group-item">Извештај - Активни пациенти (22.06.2025)</li>
-                <li class="list-group-item">Извештај - Системска активност (15.06.2025)</li>
-                <li class="list-group-item">Извештај - Доктори по одделенија (01.06.2025)</li>
+                {% for report in reports %}
+                    <li class="list-group-item">{{ report }}</li>
+                {% endfor %}
             </ul>
         </div>
 
-        <button class="btn btn-primary">Генерирај нов извештај</button>
+        <form method="POST">
+            <button type="submit" class="btn btn-primary">Генерирај нов извештај</button>
+        </form>
 
         <div class="text-center mt-4">
             <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Назад на панелот</a>

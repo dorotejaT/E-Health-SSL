@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, url_for, request, flash, ses
 from OpenSSL import crypto
 import textwrap
 import secrets
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(32)
@@ -169,9 +170,24 @@ def manage_users():
     return render_template('manage_users.html')
 
 
-@app.route('/generate_reports')
+@app.route('/generate_reports', methods=['GET', 'POST'])
 def generate_reports():
-    return render_template('generate_reports.html')
+    if 'reports' not in session:
+        session['reports'] = [
+            "Извештај - Активни пациенти (22.06.2025)",
+            "Извештај - Системска активност (15.06.2025)",
+            "Извештај - Доктори по одделенија (01.06.2025)"
+        ]
+
+    if request.method == 'POST':
+        now = datetime.now().strftime("%d.%m.%Y")
+        new_report = f"Извештај - Нов системски извештај ({now})"
+        session['reports'].insert(0, new_report)
+        session.modified = True
+        flash("Нов извештај е успешно генериран!", "success")
+        return redirect(url_for('generate_reports'))
+
+    return render_template('generate_reports.html', reports=session['reports'])
 
 
 @app.route('/view_logs')
