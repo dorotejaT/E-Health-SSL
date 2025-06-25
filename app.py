@@ -29,9 +29,6 @@ def init_patients():
         session['next_patient_id'] = 6
 
 
-# ========================
-# Decorators
-# ========================
 
 def role_required(required_role):
     def decorator(f):
@@ -56,9 +53,6 @@ def login_required(f):
     return decorated_function
 
 
-# ========================
-# Routes
-# ========================
 
 @app.route('/')
 def index():
@@ -117,7 +111,8 @@ def login():
         elif "Admin" in cn or "admin" in cn.lower():
             return redirect(url_for('admin_dashboard'))
         else:
-            return f"<h2>Непознат тип на корисник: {cn}</h2>"
+            flash("Немате дозвола за пристап со овој сертификат.", "danger")
+            return redirect(url_for('index'))
 
     except Exception as e:
         return f"""
